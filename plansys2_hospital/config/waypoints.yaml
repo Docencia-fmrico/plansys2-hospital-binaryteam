@@ -1,0 +1,9 @@
+move:
+  ros__parameters:
+    plugins:
+      - plansys2_move_bt_node
+    waypoints: ["room1", "room2"]
+    waypoint_coords:
+      room1: [7.305094242095947, -8.932085037231445, 0.0]
+      room2: [7.425076961517334, -21.783321380615234, 0.0]
+

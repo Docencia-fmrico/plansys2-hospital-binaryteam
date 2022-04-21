@@ -17,14 +17,21 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
     # Get the launch directory
     example_dir = get_package_share_directory('plansys2_hospital')
+    namespace = LaunchConfiguration('namespace')
+
+    declare_namespace_cmd = DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Namespace')
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
@@ -34,42 +41,63 @@ def generate_launch_description():
             get_package_share_directory('plansys2_bringup'),
             'launch',
             'plansys2_bringup_launch_monolithic.py')),
-        launch_arguments={'model_file': example_dir + '/pddl/hospital_navigation_domain.pddl'}.items()
+        launch_arguments={'model_file': example_dir + '/pddl/move_domain.pddl'}.items()
         )
 
-    nav2_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(
-            get_package_share_directory('br2_navigation'),
-            'launch',
-            'tiago_navigation.launch.py'))
-        )
-
+    '''
     gazebo_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(
             get_package_share_directory('br2_tiago'),
             'launch',
             'sim.launch.py'))
         )
+    '''
     # Specify the actions
     move_cmd = Node(
-        package='plansys2_patrol_navigation_example',
-        executable='move_action_node',
-        name='move_action_node',
+        package='plansys2_hospital',
+        executable='bt_action_node',
+        name='move',
+        namespace=namespace,
+        output='screen',
+        parameters=[
+          example_dir + '/config/waypoints.yaml',
+          {
+            'action_name': 'move',
+            'publisher_port': 1668,
+            'server_port': 1669,
+            'bt_xml_file': example_dir + '/behavior_trees_xml/move.xml'
+          }
+        ])
+
+    '''
+    open_cmd = Node(
+        package='plansys2_hospital',
+        executable='open_door',
+        name='open_door',
         output='screen',
         parameters=[])
 
+    close_cmd = Node(
+        package='plansys2_hospital',
+        executable='close_door',
+        name='close_door',
+        output='screen',
+        parameters=[])
+    '''
 
     # Create the launch description and populate
     ld = LaunchDescription()
 
     # Set environment variables
     ld.add_action(stdout_linebuf_envvar)
-
+    ld.add_action(declare_namespace_cmd)
     # Declare the launch options
     ld.add_action(plansys2_cmd)
-    ld.add_action(nav2_cmd)
+    '''
     ld.add_action(gazebo_cmd)
-
+    '''
     ld.add_action(move_cmd)
-    
+
+    # ld.add_action(open_cmd)
+    # ld.add_action(close_cmd)
     return ld

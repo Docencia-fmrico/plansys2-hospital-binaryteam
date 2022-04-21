@@ -12,6 +12,7 @@ find_package(plansys2_executor REQUIRED)
 find_package(plansys2_planner REQUIRED)
 find_package(plansys2_problem_expert REQUIRED)
 find_package(plansys2_pddl_parser REQUIRED)
+find_package(plansys2_bt_actions REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -25,22 +26,26 @@ set(dependencies
     plansys2_planner
     plansys2_problem_expert
     plansys2_pddl_parser
+    plansys2_bt_actions
 )
 
 include_directories(include)
 
 add_library(plansys2_move_bt_node SHARED src/plansys2_hospital/Move.cpp)
-list(APPEND plugin_libs plansys2_recharge_bt_node)
+list(APPEND plugin_libs plansys2_move_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
-install(DIRECTORY launch pddl behavior_trees_xml config DESTINATION share/${PROJECT_NAME})
+add_executable(move_controller_node src/move_controller_node.cpp)
+ament_target_dependencies(move_controller_node ${dependencies})
+
+install(DIRECTORY launch pddl params maps behavior_trees_xml config DESTINATION share/${PROJECT_NAME})
 
 install(TARGETS
-  fake_move_table
+  move_controller_node
   
   ${plugin_libs}
   ARCHIVE DESTINATION lib
