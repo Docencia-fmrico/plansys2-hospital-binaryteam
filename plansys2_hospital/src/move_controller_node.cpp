@@ -53,6 +53,11 @@ public:
 
     problem_expert_->addInstance(plansys2::Instance{"r2d2", "robot"});
 
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat1 room1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected room1 doormat1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat2 room2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected room2 doormat2)"));
+
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat1 doormat2)"));
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat2 doormat1)"));
     problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
