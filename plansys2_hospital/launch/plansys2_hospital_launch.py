@@ -71,23 +71,6 @@ def generate_launch_description():
             'bt_xml_file': example_dir + '/behavior_trees_xml/move.xml'
           }
         ])
-
-    move_2_cmd = Node(
-        package='plansys2_bt_actions',
-        executable='bt_action_node',
-        name='move_2',
-        namespace=namespace,
-        output='screen',
-        parameters=[
-          example_dir + '/config/waypoints.yaml',
-          {
-            'action_name': 'move',
-            'publisher_port': 1668,
-            'server_port': 1669,
-            'bt_xml_file': example_dir + '/behavior_trees_xml/move.xml'
-          }
-        ])
-
     '''
     open_cmd = Node(
         package='plansys2_hospital',
@@ -116,7 +99,6 @@ def generate_launch_description():
     ld.add_action(gazebo_cmd)
     '''
     ld.add_action(move_cmd)
-    ld.add_action(move_2_cmd)
 
     # ld.add_action(open_cmd)
     # ld.add_action(close_cmd)

@@ -48,15 +48,54 @@ public:
   {
     problem_expert_->addInstance(plansys2::Instance{"room1", "room"});
     problem_expert_->addInstance(plansys2::Instance{"room2", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"doormat1", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"doormat2", "room"});
+
     problem_expert_->addInstance(plansys2::Instance{"r2d2", "robot"});
 
-    problem_expert_->addPredicate(plansys2::Predicate("(connected room1 room2)"));
-    problem_expert_->addPredicate(plansys2::Predicate("(connected room2 room1)"));
-    problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 room2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat1 doormat2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat2 doormat1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
+  
   }
 
   void step()
-  {
+  { 
+
+    // Only go to room2 from room1
+
+    static bool once = false;
+
+    if (!once) {
+
+      // Set the goal for next state
+      problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
+
+      // Compute the plan
+      auto domain = domain_expert_->getDomain();
+      auto problem = problem_expert_->getProblem();
+      auto plan = planner_client_->getPlan(domain, problem);
+
+      if (!plan.has_value()) {
+        std::cout << "Could not find plan to reach goal " <<
+          parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+        return;
+      }
+
+      if (executor_client_->start_plan_execution(plan.value())) {
+        once = true;
+      }
+
+    }
+    // Check if finish
+    if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
+      if (executor_client_->getResult().value().success) {
+        std::cout << "Successful finished " << std::endl;
+      } else {
+        std::cout << "Failure finished " << std::endl;
+      }
+    }
+    /*
     switch (state_) {
       case STARTING:
         {
@@ -202,7 +241,7 @@ public:
         break;
       default:
         break;
-    }
+    }*/
   }
 
 private:
