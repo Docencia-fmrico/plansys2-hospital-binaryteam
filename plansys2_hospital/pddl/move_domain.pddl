@@ -8,7 +8,6 @@
 (:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
   room
   robot
-  zone
 )
 
 ; un-comment following line if constants are needed
@@ -32,7 +31,6 @@
       (connected ?from ?to)
       (connected ?to ?from)
       (robot_at ?rob ?from)
-      (robot_at_zone ?zon)
     ))
   )
   :effect (and 
