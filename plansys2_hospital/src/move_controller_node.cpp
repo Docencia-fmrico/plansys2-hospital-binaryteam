@@ -95,7 +95,7 @@ public:
               std::cout << "Successful finished " << std::endl;
 
               // Cleanning up
-              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
+              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room2)"));
 
               // Set the goal for next state
               problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
@@ -155,7 +155,7 @@ public:
               std::cout << "Successful finished " << std::endl;
 
               // Cleanning up
-              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room2)"));
+              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
 
               // Set the goal for next state
               problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
