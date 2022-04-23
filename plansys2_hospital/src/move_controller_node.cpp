@@ -46,25 +46,21 @@ public:
 
   void init_knowledge()
   {
-    problem_expert_->addInstance(plansys2::Instance{"hall", "room"});
     problem_expert_->addInstance(plansys2::Instance{"room1", "room"});
-
-    problem_expert_->addInstance(plansys2::Instance{"doormat11", "room"});
-    problem_expert_->addInstance(plansys2::Instance{"doormat12", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"room2", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"doormat1", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"doormat2", "room"});
 
     problem_expert_->addInstance(plansys2::Instance{"r2d2", "robot"});
 
-    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat11 room1)"));
-    problem_expert_->addPredicate(plansys2::Predicate("(connected room1 doormat11)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat1 room1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected room1 doormat1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat2 room2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected room2 doormat2)"));
 
-    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat11 doormat12)"));
-    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat12 doormat11)"));
-
-    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat12 hall)"));
-    problem_expert_->addPredicate(plansys2::Predicate("(connected hall doormat12)"));
-    
-
-    problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 hall)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat1 doormat2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat2 doormat1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
   
   }
 
@@ -78,7 +74,7 @@ public:
     if (!once) {
 
       // Set the goal for next state
-      problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
+      problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
 
       // Compute the plan
       auto domain = domain_expert_->getDomain();
