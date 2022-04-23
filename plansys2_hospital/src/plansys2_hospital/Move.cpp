@@ -66,6 +66,7 @@ Move::on_tick()
 
   geometry_msgs::msg::Pose2D pose2nav;
   if (waypoints_.find(goal) != waypoints_.end()) {
+    std::cerr << "Goal: " << goal << std::endl;
     pose2nav = waypoints_[goal];
   } else {
     std::cerr << "No coordinate for waypoint [" << goal << "]" << std::endl;

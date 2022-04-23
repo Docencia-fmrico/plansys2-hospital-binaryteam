@@ -2,7 +2,7 @@ move:
   ros__parameters:
     plugins:
       - plansys2_move_bt_node
-    waypoints: ["hall", "room1", "room2", "doormat11", "doormat12"]
+    waypoints: ["hall", "room1", "room2", "doormat11", "doormat12", "doormat21", "doormat22"]
     waypoint_coords:
       hall: [0.0, 0.0, 0.0]
       room1: [7.305094242095947, -8.932085037231445, 0.0]
