@@ -31,7 +31,7 @@ class MoveController : public rclcpp::Node
 {
 public:
   MoveController()
-  : rclcpp::Node("move_controller"), state_(STARTING)
+  : rclcpp::Node("move_controller"), state_(GO_TO_ROOM1)
   {
   }
 
@@ -81,6 +81,85 @@ public:
   void step()
   { 
 
+    bool new_plan = false;
+
+    switch (state_) {
+
+      case NAVIGATING:
+        std::cout << "Moving like Jagger!" << std::endl;
+
+        // Check if has finished the plan
+        if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
+          if (executor_client_->getResult().value().success) {
+            std::cout << "Successful finished " << std::endl;
+          } else {
+            std::cout << "Failure finished " << std::endl;
+          }
+
+          if (state_ == GO_TO_ROOM1) {
+            state_ = GO_TO_ROOM2;
+          } else if (state_ == GO_TO_ROOM2) {
+            state_ = GO_TO_HALL;
+          } else {
+            state_ = GO_TO_ROOM1;
+          }
+        }
+      break;
+
+      case GO_TO_ROOM1:
+        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
+        new_plan = true;
+      break;
+
+      case GO_TO_ROOM2:
+        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
+        new_plan = true;
+      break;
+
+      case GO_TO_HALL:
+        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 hall))"));
+        new_plan = true;
+      break;
+    }
+
+
+    if (new_plan) {
+
+      // Compute the plan
+      auto domain = domain_expert_->getDomain();
+      auto problem = problem_expert_->getProblem();
+      auto plan = planner_client_->getPlan(domain, problem);
+
+      if (!plan.has_value()) {
+        std::cout << "[ERROR] Could not find plan to reach goal " <<
+          parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+        return;
+      }
+
+      if (executor_client_->start_plan_execution(plan.value())) {
+        std::cout << "Plan started succesfully!" << std::endl;
+      } else {
+        std::cout << "[ERROR] Plan failed at start!" << std::endl;
+      }
+      state_ = NAVIGATING;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     // Only go to room2 from room1
 
     static bool once = false;
@@ -114,7 +193,7 @@ public:
         std::cout << "Failure finished " << std::endl;
       }
     }
-    /*
+    
     switch (state_) {
       case STARTING:
         {
@@ -264,7 +343,7 @@ public:
   }
 
 private:
-  typedef enum {STARTING, GO_ROOM1, GO_ROOM2} StateType;
+  typedef enum {NAVIGATING, GO_TO_ROOM1, GO_TO_ROOM2, GO_TO_HALL} StateType;
   StateType state_;
 
   std::shared_ptr<plansys2::DomainExpertClient> domain_expert_;
