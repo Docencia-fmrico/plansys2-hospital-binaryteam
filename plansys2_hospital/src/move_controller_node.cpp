@@ -110,19 +110,19 @@ public:
       break;
 
       case GO_TO_ROOM1:
-        problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 hall)"));
+        problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
         new_plan = true;
       break;
 
       case GO_TO_ROOM2:
-        problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
+        problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
         new_plan = true;
       break;
 
       case GO_TO_HALL:
-        problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room2)"));
+        problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 hall))"));
         new_plan = true;
       break;
