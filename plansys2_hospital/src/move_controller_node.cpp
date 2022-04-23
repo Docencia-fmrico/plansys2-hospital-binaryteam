@@ -74,6 +74,9 @@ public:
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat21 doormat22)"));
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat22 doormat21)"));
 
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat12 doormat22)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat22 doormat12)"));
+
     problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 hall)"));
   
   }
