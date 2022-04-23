@@ -31,7 +31,7 @@ class MoveController : public rclcpp::Node
 {
 public:
   MoveController()
-  : rclcpp::Node("move_controller"), state_(GO_TO_ROOM1)
+  : rclcpp::Node("move_controller"), state_(GO_TO_ROOM1), last_go_(GO_TO_HALL)
   {
   }
 
@@ -83,7 +83,6 @@ public:
 
   void step()
   { 
-
     bool new_plan = false;
 
     switch (state_) {
@@ -99,12 +98,12 @@ public:
             std::cout << "Failure finished " << std::endl;
           }
 
-          if (state_ == GO_TO_ROOM1) {
-            state_ = GO_TO_ROOM2;
-          } else if (state_ == GO_TO_ROOM2) {
-            state_ = GO_TO_HALL;
-          } else {
+          if (last_go_ == GO_TO_HALL) {
             state_ = GO_TO_ROOM1;
+          } else if (last_go_ == GO_TO_ROOM1) {
+            state_ = GO_TO_ROOM2;
+          } else {
+            state_ = GO_TO_HALL;
           }
         }
       break;
@@ -113,18 +112,21 @@ public:
         problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
         new_plan = true;
+        last_go_ = GO_TO_ROOM1;
       break;
 
       case GO_TO_ROOM2:
         problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
         new_plan = true;
+        last_go_ = GO_TO_ROOM2;
       break;
 
       case GO_TO_HALL:
         problem_expert_->clearGoal();
         problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 hall))"));
         new_plan = true;
+        last_go_ = GO_TO_HALL;
       break;
     }
 
@@ -351,6 +353,7 @@ public:
 private:
   typedef enum {NAVIGATING, GO_TO_ROOM1, GO_TO_ROOM2, GO_TO_HALL} StateType;
   StateType state_;
+  StateType last_go_;
 
   std::shared_ptr<plansys2::DomainExpertClient> domain_expert_;
   std::shared_ptr<plansys2::PlannerClient> planner_client_;
