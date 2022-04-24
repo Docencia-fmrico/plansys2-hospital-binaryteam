@@ -39,12 +39,16 @@ foreach(bt_plugin ${plugin_libs})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
+add_executable(take_stuff_action_node src/take_stuff_action_node.cpp)
+ament_target_dependencies(take_stuff_action_node ${dependencies})
+
 add_executable(move_controller_node src/move_controller_node.cpp)
 ament_target_dependencies(move_controller_node ${dependencies})
 
 install(DIRECTORY launch pddl params maps behavior_trees_xml config DESTINATION share/${PROJECT_NAME})
 
 install(TARGETS
+  take_stuff_action_node
   move_controller_node
   
   ${plugin_libs}

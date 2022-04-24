@@ -1,0 +1,29 @@
+set instance hall room 
+set instance room1 room
+set instance room2 room
+set instance doormat11 room
+set instance doormat12 room
+set instance doormat21 room
+set instance doormat22 room 
+set instance r2d2 robot 
+set instance medicines stuff
+
+set predicate (connected doormat11 room1)
+set predicate (connected room1 doormat11)
+set predicate (connected doormat12 hall)
+set predicate (connected hall doormat12)
+set predicate (connected doormat11 doormat12)
+set predicate (connected doormat12 doormat11)
+set predicate (connected doormat21 room2)
+set predicate (connected room2 doormat21)
+set predicate (connected doormat22 hall)
+set predicate (connected hall doormat22)
+set predicate (connected doormat21 doormat22)
+set predicate (connected doormat22 doormat21)
+set predicate (connected doormat12 doormat22)
+set predicate (connected doormat22 doormat12)
+set predicate (robot_at r2d2 hall)
+set predicate (gripper_free r2d2)
+set predicate (stuff_at medicines hall)
+
+set goal (and(stuff_at medicines room1) (robot_at r2d2 room2))

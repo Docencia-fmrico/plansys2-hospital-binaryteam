@@ -55,6 +55,7 @@ public:
     problem_expert_->addInstance(plansys2::Instance{"doormat22", "room"});
 
     problem_expert_->addInstance(plansys2::Instance{"r2d2", "robot"});
+    problem_expert_->addInstance(plansys2::Instance{"medicines", "stuff"});
 
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat11 room1)"));
     problem_expert_->addPredicate(plansys2::Predicate("(connected room1 doormat11)"));
@@ -78,7 +79,8 @@ public:
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat22 doormat12)"));
 
     problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 hall)"));
-  
+    problem_expert_->addPredicate(plansys2::Predicate("(gripper_free r2d2)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(stuff_at medicines hall)"));
   }
 
   void step()
@@ -152,202 +154,6 @@ public:
       state_ = NAVIGATING;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    // Only go to room2 from room1
-
-    static bool once = false;
-
-    if (!once) {
-
-      // Set the goal for next state
-      problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
-
-      // Compute the plan
-      auto domain = domain_expert_->getDomain();
-      auto problem = problem_expert_->getProblem();
-      auto plan = planner_client_->getPlan(domain, problem);
-
-      if (!plan.has_value()) {
-        std::cout << "Could not find plan to reach goal " <<
-          parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-        return;
-      }
-
-      if (executor_client_->start_plan_execution(plan.value())) {
-        once = true;
-      }
-
-    }
-    // Check if finish
-    if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
-      if (executor_client_->getResult().value().success) {
-        std::cout << "Successful finished " << std::endl;
-      } else {
-        std::cout << "Failure finished " << std::endl;
-      }
-    }
-    
-    switch (state_) {
-      case STARTING:
-        {
-          // Set the goal for next state
-          problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
-
-          // Compute the plan
-          auto domain = domain_expert_->getDomain();
-          auto problem = problem_expert_->getProblem();
-          auto plan = planner_client_->getPlan(domain, problem);
-
-          if (!plan.has_value()) {
-            std::cout << "Could not find plan to reach goal " <<
-              parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-            break;
-          }
-
-          // Execute the plan
-          if (executor_client_->start_plan_execution(plan.value())) {
-            state_ = GO_ROOM1;
-          }
-        }
-        break;
-      case GO_ROOM1:
-        {
-          auto feedback = executor_client_->getFeedBack();
-
-          for (const auto & action_feedback : feedback.action_execution_status) {
-            std::cout << "[" << action_feedback.action << " " <<
-              action_feedback.completion * 100.0 << "%]";
-          }
-          std::cout << std::endl;
-
-          if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
-            if (executor_client_->getResult().value().success) {
-              std::cout << "Successful finished " << std::endl;
-
-              // Cleanning up
-              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room2)"));
-
-              // Set the goal for next state
-              problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
-
-              // Compute the plan
-              auto domain = domain_expert_->getDomain();
-              auto problem = problem_expert_->getProblem();
-              auto plan = planner_client_->getPlan(domain, problem);
-
-              if (!plan.has_value()) {
-                std::cout << "Could not find plan to reach goal " <<
-                  parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-                break;
-              }
-
-              // Execute the plan
-              if (executor_client_->start_plan_execution(plan.value())) {
-                state_ = GO_ROOM2;
-              }
-            } else {
-              for (const auto & action_feedback : feedback.action_execution_status) {
-                if (action_feedback.status == plansys2_msgs::msg::ActionExecutionInfo::FAILED) {
-                  std::cout << "[" << action_feedback.action << "] finished with error: " <<
-                    action_feedback.message_status << std::endl;
-                }
-              }
-
-              // Replan
-              auto domain = domain_expert_->getDomain();
-              auto problem = problem_expert_->getProblem();
-              auto plan = planner_client_->getPlan(domain, problem);
-
-              if (!plan.has_value()) {
-                std::cout << "Unsuccessful replan attempt to reach goal " <<
-                  parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-                break;
-              }
-
-              // Execute the plan
-              executor_client_->start_plan_execution(plan.value());
-            }
-          }
-        }
-        break;
-      case GO_ROOM2:
-        {
-          auto feedback = executor_client_->getFeedBack();
-
-          for (const auto & action_feedback : feedback.action_execution_status) {
-            std::cout << "[" << action_feedback.action << " " <<
-              action_feedback.completion * 100.0 << "%]";
-          }
-          std::cout << std::endl;
-
-          if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
-            if (executor_client_->getResult().value().success) {
-              std::cout << "Successful finished " << std::endl;
-
-              // Cleanning up
-              problem_expert_->removePredicate(plansys2::Predicate("(robot_at r2d2 room1)"));
-
-              // Set the goal for next state
-              problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
-
-              // Compute the plan
-              auto domain = domain_expert_->getDomain();
-              auto problem = problem_expert_->getProblem();
-              auto plan = planner_client_->getPlan(domain, problem);
-
-              if (!plan.has_value()) {
-                std::cout << "Could not find plan to reach goal " <<
-                  parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-                break;
-              }
-
-              // Execute the plan
-              if (executor_client_->start_plan_execution(plan.value())) {
-                state_ = GO_ROOM1;
-              }
-            } else {
-              for (const auto & action_feedback : feedback.action_execution_status) {
-                if (action_feedback.status == plansys2_msgs::msg::ActionExecutionInfo::FAILED) {
-                  std::cout << "[" << action_feedback.action << "] finished with error: " <<
-                    action_feedback.message_status << std::endl;
-                }
-              }
-
-              // Replan
-              auto domain = domain_expert_->getDomain();
-              auto problem = problem_expert_->getProblem();
-              auto plan = planner_client_->getPlan(domain, problem);
-
-              if (!plan.has_value()) {
-                std::cout << "Unsuccessful replan attempt to reach goal " <<
-                  parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
-                break;
-              }
-
-              // Execute the plan
-              executor_client_->start_plan_execution(plan.value());
-            }
-          }
-        }
-        break;
-      default:
-        break;
-    }*/
   }
 
 private:
