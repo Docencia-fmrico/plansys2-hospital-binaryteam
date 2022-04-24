@@ -85,6 +85,20 @@ def generate_launch_description():
         name='release_stuff_action_node',
         output='screen',
         parameters=[])
+
+    close_door_cmd = Node(
+        package='plansys2_hospital',
+        executable='close_door_action_node',
+        name='close_door_action_node',
+        output='screen',
+        parameters=[])
+
+    open_door_cmd = Node(
+        package='plansys2_hospital',
+        executable='open_door_action_node',
+        name='open_door_action_node',
+        output='screen',
+        parameters=[])   
   
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -100,4 +114,6 @@ def generate_launch_description():
     ld.add_action(move_cmd)
     ld.add_action(take_stuff_cmd)
     ld.add_action(release_stuff_cmd)
+    ld.add_action(open_door_cmd)
+    ld.add_action(close_door_cmd)
     return ld

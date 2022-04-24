@@ -45,6 +45,12 @@ ament_target_dependencies(take_stuff_action_node ${dependencies})
 add_executable(release_stuff_action_node src/release_stuff_action_node.cpp)
 ament_target_dependencies(release_stuff_action_node ${dependencies})
 
+add_executable(open_door_action_node src/open_door_action_node.cpp)
+ament_target_dependencies(open_door_action_node ${dependencies})
+
+add_executable(close_door_action_node src/close_door_action_node.cpp)
+ament_target_dependencies(close_door_action_node ${dependencies})
+
 add_executable(move_controller_node src/move_controller_node.cpp)
 ament_target_dependencies(move_controller_node ${dependencies})
 
@@ -54,6 +60,8 @@ install(TARGETS
   take_stuff_action_node
   release_stuff_action_node
   move_controller_node
+  open_door_action_node
+  close_door_action_node
   
   ${plugin_libs}
   ARCHIVE DESTINATION lib
