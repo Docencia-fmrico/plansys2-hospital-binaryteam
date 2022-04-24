@@ -45,7 +45,7 @@
   :condition (and 
     (at start(gripper_free ?rob))
     (at start(stuff_at ?st ?from))
-    (at start (robot_at ?rob ?from))
+    (over all (robot_at ?rob ?from))
   )
   :effect (and 
       (at end(not (gripper_free ?rob)))
@@ -58,7 +58,7 @@
   :parameters (?rob - robot ?to - room ?st - stuff)
   :duration (= ?duration 3)
   :condition (and 
-    (at start (robot_at ?rob ?to))
+    (over all (robot_at ?rob ?to))
     (at start (stuff_at ?st ?rob))  
   )
   :effect (and 

@@ -95,9 +95,12 @@ public:
         auto my_feedback = executor_client_->getFeedBack();
 
         for (const auto & action_feedback : my_feedback.action_execution_status) {
-          std::cout << "[" << action_feedback.action << " " <<
-            action_feedback.completion * 100.0 << "%]";
+          if (action_feedback.completion > 0) {
+            std::cout << "[" << action_feedback.action << " " <<
+              action_feedback.completion * 100.0 << "%]";
+          }
         }
+        std::cout << std::endl;
 
         // Check if has finished the plan
         if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
