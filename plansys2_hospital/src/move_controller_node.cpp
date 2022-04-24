@@ -31,7 +31,7 @@ class MoveController : public rclcpp::Node
 {
 public:
   MoveController()
-  : rclcpp::Node("move_controller"), state_(GO_TO_ROOM1), last_go_(GO_TO_HALL)
+  : rclcpp::Node("move_controller"), state_(PROBLEM1), last_problem_(PROBLEM2)
   {
   }
 
@@ -83,14 +83,21 @@ public:
     problem_expert_->addPredicate(plansys2::Predicate("(stuff_at medicines hall)"));
   }
 
-  void step()
-  { 
+  void step() { 
+
     bool new_plan = false;
 
     switch (state_) {
 
-      case NAVIGATING:
-        std::cout << "Moving like Jagger!" << std::endl;
+      case WORKING:
+      {
+        // Lets see feedback
+        auto my_feedback = executor_client_->getFeedBack();
+
+        for (const auto & action_feedback : my_feedback.action_execution_status) {
+          std::cout << "[" << action_feedback.action << " " <<
+            action_feedback.completion * 100.0 << "%]";
+        }
 
         // Check if has finished the plan
         if (!executor_client_->execute_and_check_plan() && executor_client_->getResult()) {
@@ -100,35 +107,32 @@ public:
             std::cout << "Failure finished " << std::endl;
           }
 
-          if (last_go_ == GO_TO_HALL) {
-            state_ = GO_TO_ROOM1;
-          } else if (last_go_ == GO_TO_ROOM1) {
-            state_ = GO_TO_ROOM2;
+          if (last_problem_ == PROBLEM1) {
+            state_ = PROBLEM2;
           } else {
-            state_ = GO_TO_HALL;
+            state_ = PROBLEM1;
           }
         }
+      }
       break;
-
-      case GO_TO_ROOM1:
+    
+      case PROBLEM1:
+      {
         problem_expert_->clearGoal();
-        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room1))"));
+        problem_expert_->setGoal(plansys2::Goal("(and(stuff_at medicines room1) (robot_at r2d2 room2)))"));
         new_plan = true;
-        last_go_ = GO_TO_ROOM1;
+        last_problem_ = PROBLEM1;
+
+      }
       break;
-
-      case GO_TO_ROOM2:
+      
+      case PROBLEM2:
+      {
         problem_expert_->clearGoal();
-        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 room2))"));
+        problem_expert_->setGoal(plansys2::Goal("(and(stuff_at medicines hall) (robot_at r2d2 hall)))"));
         new_plan = true;
-        last_go_ = GO_TO_ROOM2;
-      break;
-
-      case GO_TO_HALL:
-        problem_expert_->clearGoal();
-        problem_expert_->setGoal(plansys2::Goal("(and(robot_at r2d2 hall))"));
-        new_plan = true;
-        last_go_ = GO_TO_HALL;
+        last_problem_ = PROBLEM2;
+      }
       break;
     }
 
@@ -151,15 +155,15 @@ public:
       } else {
         std::cout << "[ERROR] Plan failed at start!" << std::endl;
       }
-      state_ = NAVIGATING;
+      state_ = WORKING;
     }
 
   }
 
 private:
-  typedef enum {NAVIGATING, GO_TO_ROOM1, GO_TO_ROOM2, GO_TO_HALL} StateType;
+  typedef enum {WORKING, PROBLEM1, PROBLEM2} StateType;
   StateType state_;
-  StateType last_go_;
+  StateType last_problem_;
 
   std::shared_ptr<plansys2::DomainExpertClient> domain_expert_;
   std::shared_ptr<plansys2::PlannerClient> planner_client_;

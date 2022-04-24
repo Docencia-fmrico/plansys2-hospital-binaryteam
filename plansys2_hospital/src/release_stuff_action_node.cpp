@@ -24,11 +24,11 @@
 
 using namespace std::chrono_literals;
 
-class TakeStuff : public plansys2::ActionExecutorClient
+class ReleaseStuff : public plansys2::ActionExecutorClient
 {
 public:
-  TakeStuff()
-  : plansys2::ActionExecutorClient("take_stuff", 333ms)
+  ReleaseStuff()
+  : plansys2::ActionExecutorClient("release_stuff", 333ms)
   {
   }
 
@@ -50,9 +50,9 @@ private:
   {
     if (progress_ < 1.0) {
       progress_ += 0.1;
-      send_feedback(progress_, "Taking stuff " + get_arguments()[2]);
+      send_feedback(progress_, "Releasing stuff " + get_arguments()[2]);
     } else {
-      finish(true, 1.0, "Take stuff completed");
+      finish(true, 1.0, "Release stuff completed");
     }
   }
 
@@ -62,9 +62,9 @@ private:
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<TakeStuff>();
+  auto node = std::make_shared<ReleaseStuff>();
 
-  node->set_parameter(rclcpp::Parameter("action_name", "take_stuff"));
+  node->set_parameter(rclcpp::Parameter("action_name", "release_stuff"));
   node->trigger_transition(lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE);
 
   rclcpp::spin(node->get_node_base_interface());

@@ -78,6 +78,13 @@ def generate_launch_description():
         name='take_stuff_action_node',
         output='screen',
         parameters=[])
+
+    release_stuff_cmd = Node(
+        package='plansys2_hospital',
+        executable='release_stuff_action_node',
+        name='release_stuff_action_node',
+        output='screen',
+        parameters=[])
   
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -92,4 +99,5 @@ def generate_launch_description():
     '''
     ld.add_action(move_cmd)
     ld.add_action(take_stuff_cmd)
+    ld.add_action(release_stuff_cmd)
     return ld

@@ -56,7 +56,7 @@
 
 (:durative-action release_stuff
   :parameters (?rob - robot ?to - room ?st - stuff)
-  :duration (= ?duration 1)
+  :duration (= ?duration 3)
   :condition (and 
     (at start (robot_at ?rob ?to))
     (at start (stuff_at ?st ?rob))  
