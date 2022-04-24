@@ -71,6 +71,22 @@ def generate_launch_description():
             'bt_xml_file': example_dir + '/behavior_trees_xml/move.xml'
           }
         ])
+
+    cross_door_cmd = Node(
+        package='plansys2_bt_actions',
+        executable='bt_action_node',
+        name='cross_door',
+        namespace=namespace,
+        output='screen',
+        parameters=[
+          example_dir + '/config/waypoints.yaml',
+          {
+            'action_name': 'cross_door',
+            'publisher_port': 1668,
+            'server_port': 1669,
+            'bt_xml_file': example_dir + '/behavior_trees_xml/move.xml'
+          }
+        ])
     
     take_stuff_cmd = Node(
         package='plansys2_hospital',
@@ -112,6 +128,7 @@ def generate_launch_description():
     ld.add_action(gazebo_cmd)
     '''
     ld.add_action(move_cmd)
+    ld.add_action(cross_door_cmd)
     ld.add_action(take_stuff_cmd)
     ld.add_action(release_stuff_cmd)
     ld.add_action(open_door_cmd)

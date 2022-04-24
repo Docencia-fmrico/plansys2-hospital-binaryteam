@@ -2,14 +2,21 @@ move:
   ros__parameters:
     plugins:
       - plansys2_move_bt_node
-    waypoints: ["hall", "room1", "room2", "doormat11", "doormat12", "doormat21", "doormat22"]
+    waypoints: ["hall", "room1", "room2", "doormat11", "doormat12", "doormat21", "doormat22", "doormat_toilet"]
     waypoint_coords:
       hall: [0.0, 0.0, 0.0]
-      room1: [7.305094242095947, -8.932085037231445, 0.0]
-      room2: [7.425076961517334, -21.783321380615234, 0.0]
+      room1: [7.395752906799316, -5.2851362228393555, 0.0]
+      room2: [7.395752906799316, -19.47663688659668, 0.0]
       doormat11: [6.75584077835083, -9.849526405334473, 0.0]
       doormat12: [4.6333746910095215, -10.034628868103027, 0.0]
       doormat21: [6.5901713371276855, -23.835140228271484, 0.0]
       doormat22: [4.809231281280518, -23.967548370361328, 0.0]
-      
-
+      doormat_toilet: [6.265537738800049, -17.531100273132324, 0.0]
+cross_door:
+  ros__parameters:
+    plugins:
+      - plansys2_move_bt_node
+    waypoints: ["doormat_toilet", "toilet_r2"]
+    waypoint_coords:
+      doormat_toilet: [6.265537738800049, -17.531100273132324, 0.0]
+      toilet_r2: [6.317922592163086, -14.531100273132324, 0.0]

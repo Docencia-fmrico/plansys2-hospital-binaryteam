@@ -49,12 +49,15 @@ public:
     problem_expert_->addInstance(plansys2::Instance{"hall", "room"});
     problem_expert_->addInstance(plansys2::Instance{"room1", "room"});
     problem_expert_->addInstance(plansys2::Instance{"room2", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"toilet_r2", "room"});
     problem_expert_->addInstance(plansys2::Instance{"doormat11", "room"});
     problem_expert_->addInstance(plansys2::Instance{"doormat12", "room"});
     problem_expert_->addInstance(plansys2::Instance{"doormat21", "room"});
     problem_expert_->addInstance(plansys2::Instance{"doormat22", "room"});
+    problem_expert_->addInstance(plansys2::Instance{"doormat_toilet", "room"});
 
     problem_expert_->addInstance(plansys2::Instance{"r2d2", "robot"});
+    problem_expert_->addInstance(plansys2::Instance{"d1", "door"});
     problem_expert_->addInstance(plansys2::Instance{"medicines", "stuff"});
 
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat11 room1)"));
@@ -78,6 +81,13 @@ public:
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat12 doormat22)"));
     problem_expert_->addPredicate(plansys2::Predicate("(connected doormat22 doormat12)"));
 
+    problem_expert_->addPredicate(plansys2::Predicate("(connected room2 doormat_toilet)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected doormat_toilet room2)"));
+
+    problem_expert_->addPredicate(plansys2::Predicate("(connected_by_door doormat_toilet toilet_r2 d1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(connected_by_door toilet_r2 doormat_toilet d1)"));
+    problem_expert_->addPredicate(plansys2::Predicate("(closed_door d1)"));
+
     problem_expert_->addPredicate(plansys2::Predicate("(robot_at r2d2 hall)"));
     problem_expert_->addPredicate(plansys2::Predicate("(gripper_free r2d2)"));
     problem_expert_->addPredicate(plansys2::Predicate("(stuff_at medicines hall)"));
@@ -95,7 +105,13 @@ public:
         auto my_feedback = executor_client_->getFeedBack();
         
         for (const auto & action_feedback : my_feedback.action_execution_status) {
-          if (action_feedback.status == 2) {
+          if (action_feedback.status == 2 && action_feedback.action == "move") {
+            std::cout << "Moving from " << action_feedback.arguments[1] << " to " << 
+              action_feedback.arguments[2] << std::endl;
+          } else if (action_feedback.status == 2 && action_feedback.action == "cross_door") {
+            std::cout << "Crossing door " << action_feedback.arguments[3] << " from " <<
+              action_feedback.arguments[1] << " to " << action_feedback.arguments[2] << std::endl;
+          } else if (action_feedback.status == 2) {
             std::cout << action_feedback.message_status << " " <<
               action_feedback.completion * 100.0 << "%" << std::endl;
           } 
@@ -121,7 +137,7 @@ public:
       case PROBLEM1:
       {
         problem_expert_->clearGoal();
-        problem_expert_->setGoal(plansys2::Goal("(and(stuff_at medicines room1) (robot_at r2d2 room2)))"));
+        problem_expert_->setGoal(plansys2::Goal("(and(stuff_at medicines room1) (robot_at r2d2 toilet_r2)))"));
         new_plan = true;
         last_problem_ = PROBLEM1;
 

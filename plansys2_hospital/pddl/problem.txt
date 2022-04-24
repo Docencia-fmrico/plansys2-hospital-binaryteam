@@ -25,12 +25,12 @@ set predicate (connected doormat22 doormat21)
 set predicate (connected doormat12 doormat22)
 set predicate (connected doormat22 doormat12)
 
-set predicate (connected_by_door room1 toilet d1)
-set predicate (connected_by_door toilet room1 d1)
+set predicate (connected_by_door room2 toilet d1)
+set predicate (connected_by_door toilet room2 d1)
 set predicate (closed_door d1)
 
 set predicate (robot_at r2d2 hall)
 set predicate (gripper_free r2d2)
 set predicate (stuff_at medicines hall)
 
-set goal (and(stuff_at medicines room1) (robot_at r2d2 toilet) (closed_door d1))
+set goal (and(stuff_at medicines room1) (robot_at r2d2 toilet))
