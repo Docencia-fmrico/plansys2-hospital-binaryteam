@@ -95,9 +95,9 @@ public:
         auto my_feedback = executor_client_->getFeedBack();
 
         for (const auto & action_feedback : my_feedback.action_execution_status) {
-          if (action_feedback.completion > 0) {
+          if (action_feedback.completion > 0.0 || action_feedback.completion < 0.99) {
             std::cout << "[" << action_feedback.action << " " <<
-              action_feedback.completion * 100.0 << "%]";
+              action_feedback.completion * 100.0 << "%]" << std::endl;
           }
         }
         std::cout << std::endl;

@@ -28,7 +28,7 @@ class TakeStuff : public plansys2::ActionExecutorClient
 {
 public:
   TakeStuff()
-  : plansys2::ActionExecutorClient("take_stuff", 333ms)
+  : plansys2::ActionExecutorClient("take_stuff", 33ms)
   {
   }
 
@@ -49,7 +49,7 @@ private:
   void do_work()
   {
     if (progress_ < 1.0) {
-      progress_ += 0.1;
+      progress_ += 0.01;
       send_feedback(progress_, "Taking stuff " + get_arguments()[2]);
     } else {
       finish(true, 1.0, "Take stuff completed");
