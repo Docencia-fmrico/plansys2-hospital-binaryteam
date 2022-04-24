@@ -8,6 +8,7 @@
 (:types ;todo: enumerate types and their hierarchy here, e.g. car truck bus - vehicle
   room robot - stuff_locs
   stuff
+  door
 )
 
 ; un-comment following line if constants are needed
@@ -15,9 +16,12 @@
 
 (:predicates ;todo: define predicates here
   (connected ?r1 ?r2 - room)
+  (connected_by_door ?r1 ?r2 - room ?d - door)
   (robot_at ?r - robot ?site - room)
   (stuff_at ?st - stuff ?site - stuff_locs)
   (gripper_free ?r - robot)
+  (opened_door ?d - door)
+  (closed_door ?d - door)
 )
 
 
@@ -68,6 +72,49 @@
   )
 )
 
+(:durative-action cross_door
+  :parameters (?rob - robot ?from ?to - room ?d - door)
+  :duration (= ?duration 5)
+  :condition (and 
+    (over all (opened_door ?d))
+    (at start (robot_at ?rob ?from))
+    (over all (connected_by_door ?from ?to ?d))
+    (over all (connected_by_door ?to ?from ?d))
+  )
+  :effect (and 
+    (at start (robot_at ?rob ?to))
+    (at start (not (robot_at ?rob ?from)))
+  )
+)
 
+(:durative-action open_door
+  :parameters (?d - door ?from ?to - room ?rob - robot)
+  :duration (= ?duration 3)
+  :condition (and 
+    (at start (closed_door ?d))
+    (over all (robot_at ?rob ?from))
+    (over all (connected_by_door ?from ?to ?d))
+    (over all (connected_by_door ?to ?from ?d))
+  )
+  :effect (and 
+    (at start (opened_door ?d))
+    (at start (not (closed_door ?d)))
+  )
+)
+
+(:durative-action close_door
+  :parameters (?d - door ?from ?to - room ?rob - robot)
+  :duration (= ?duration 3)
+  :condition (and 
+    (at start (opened_door ?d))
+    (over all (robot_at ?rob ?from))
+    (over all (connected_by_door ?from ?to ?d))
+    (over all (connected_by_door ?to ?from ?d))
+  )
+  :effect (and 
+    (at start (closed_door ?d))
+    (at start (not (opened_door ?d)))
+  )
+)
 
 )
