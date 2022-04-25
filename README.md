@@ -13,10 +13,10 @@ There are 2 types of connections:
 
 This is so that two different actions can be used, one to move, for example, from the Hall to the outer "doormat" of ROOM1 and an action to go through the door to reach the inner "doormat" of that room.
 
-This model has given us a lot of flexibility when designing scenarios and efficient routes between nodes. 
+This model has given us a lot of flexibility when designing scenaries and efficient routes between nodes. 
 
 ## Objects in the world
-We can create instances of type "stuff". These will be objects in the world that we can interact with via pick-and-drop primitives. Being able to move objects around the world.
+We can create instances of type "stuff". These will be objects in the world that can interact with via pick-and-drop primitives. Being able to move objects around the world.
 
 ## Relation between localitation and position
 In PDDL we have names of locations. In order to become this real we have to deal with positions in the world. A correspondence between names and positions is needed.
@@ -29,7 +29,7 @@ Considering the toilet in room2 with a door and room1 and room2 without one.
 The medicines must be in room1 and the robot in the toilet of the room2. Both start at the hall. This may be a real problem.
 
 ## Video demostration
-
+[![Watch the video](images/video.png)](https://www.youtube.com/watch?v=zw0Uijfoyj0)
 
 #### Mantainers
 <p.colmenar.2019@alumnos.urjc.es>\
